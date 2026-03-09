@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
   Search,
@@ -44,6 +44,8 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import { useSession, signOut } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 type Notification = {
   id: string;
@@ -120,6 +122,7 @@ const TYPE_COLOR: Record<Notification["type"], string> = {
 
 function Breadcrumbs() {
   const pathname = usePathname();
+  const user = useSession();
   const segments = pathname.split("/").filter(Boolean);
 
   return (
@@ -337,14 +340,46 @@ function ThemeToggle() {
 }
 
 function UserMenu() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleSignOut = () => {
+    signOut(
+      {},
+      {
+        onSuccess: () => {
+          toast.success("Signed out successfully");
+          router.push("/");
+          router.refresh();
+        },
+        onError: (error) => {
+          toast.error(
+            "Error signing out: " + error.error.message ||
+              "An unexpected error occurred",
+          );
+        },
+      },
+    );
+  };
+
+  const name = session?.user?.name ?? "Admin";
+  const email = session?.user?.email ?? "admin@portfolio.dev";
+  const image = session?.user?.image ?? "/avatar.png";
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="size-8 rounded-full p-0">
           <Avatar className="size-8 rounded-full ring-2 ring-border">
-            <AvatarImage src="/avatar.png" alt="Admin" />
+            <AvatarImage src={image} alt={name} />
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold rounded-full">
-              AD
+              {initials}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -352,8 +387,8 @@ function UserMenu() {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col gap-0.5">
-            <p className="text-sm font-semibold">Admin</p>
-            <p className="text-xs text-muted-foreground">admin@portfolio.dev</p>
+            <p className="text-sm font-semibold">{name}</p>
+            <p className="text-xs text-muted-foreground">{email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -379,7 +414,10 @@ function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive focus:text-destructive">
+        <DropdownMenuItem
+          className="text-destructive focus:text-destructive cursor-pointer"
+          onClick={handleSignOut}
+        >
           <LogOut className="mr-2 size-4" />
           Sign out
         </DropdownMenuItem>
