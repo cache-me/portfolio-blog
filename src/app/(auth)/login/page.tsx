@@ -83,7 +83,7 @@ export default function LoginPage() {
     },
     onSuccess: () => {
       toast.success("Signed in successfully");
-      router.push("/dashboard");
+      router.push("/admin");
       router.refresh();
     },
     onError: (error) => {

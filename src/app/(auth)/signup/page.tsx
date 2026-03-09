@@ -94,7 +94,7 @@ export default function SignupPage() {
         name,
         email,
         password,
-        callbackURL: "/dashboard",
+        callbackURL: "/admin",
       });
       if (res?.error) throw new Error(res.error.message);
       return res.data;
