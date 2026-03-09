@@ -5,7 +5,7 @@ import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import type { RouterClient } from "@orpc/server";
 
 const link = new RPCLink({
-  url: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/api/rpc`,
+  url: `http://localhost:3000/api/rpc`,
   headers: () => {
     if (typeof window === "undefined") return {};
     const token = localStorage.getItem("auth_token");

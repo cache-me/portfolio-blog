@@ -66,15 +66,15 @@ export function SkillsSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {grouped.map((group) => (
             <div
-              key={group.category.id}
+              key={group.id}
               className="bg-card border border-border rounded-xl p-6 space-y-1"
             >
               <div className="flex items-center gap-3 mb-4">
-                {group.category.icon && (
-                  <span className="text-xl">{group.category.icon}</span>
+                {group.icon && (
+                  <span className="text-xl">{group.icon}</span>
                 )}
                 <h3 className="text-foreground font-semibold text-sm uppercase tracking-wider">
-                  {group.category.name}
+                  {group.name}
                 </h3>
               </div>
               {group.skills.map((skill) => (

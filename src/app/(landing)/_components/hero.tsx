@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/client";
+import { format } from "date-fns";
 
 export function HeroSection() {
   const { data: profile } = useQuery(orpc.profile.get.queryOptions());
@@ -137,10 +138,10 @@ export function HeroSection() {
                   </p>
                 </div>
               )}
-              {profile?.projectsCompleted && (
+              {profile?.updatedAt && (
                 <div className="absolute -top-4 -right-4 bg-card border border-border rounded-xl px-4 py-3 shadow-lg">
                   <p className="text-2xl font-black text-foreground leading-none">
-                    {profile.projectsCompleted}+
+                    {format(new Date(profile.updatedAt), "MMM yyyy")}+
                   </p>
                   <p className="text-muted-foreground text-xs mt-1">Projects</p>
                 </div>

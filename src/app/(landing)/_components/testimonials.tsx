@@ -68,16 +68,16 @@ export function TestimonialsSection() {
               {t.rating && <StarRating rating={t.rating} />}
 
               <p className="text-muted-foreground text-sm leading-relaxed flex-1 italic">
-                "{t.content}"
+                &quot;{t.content}&quot;
               </p>
 
               {/* Author */}
               <div className="flex items-center gap-3 pt-2 border-t border-border">
-                {t.avatarUrl ? (
+                {t.avatar ? (
                   <div className="size-9 rounded-full overflow-hidden bg-muted shrink-0">
                     <Image
-                      src={t.avatarUrl}
-                      alt={t.authorName}
+                      src={t.avatar}
+                      alt={t.name || "Client Avatar"}
                       width={36}
                       height={36}
                       className="object-cover"
@@ -86,19 +86,17 @@ export function TestimonialsSection() {
                 ) : (
                   <div className="size-9 rounded-full bg-accent flex items-center justify-center shrink-0">
                     <span className="text-accent-foreground text-sm font-bold">
-                      {t.authorName[0]}
+                      {t.name[0]}
                     </span>
                   </div>
                 )}
                 <div>
                   <p className="text-foreground text-sm font-semibold leading-tight">
-                    {t.authorName}
+                    {t.name}
                   </p>
-                  {(t.authorRole || t.authorCompany) && (
+                  {t.company && (
                     <p className="text-muted-foreground text-xs">
-                      {[t.authorRole, t.authorCompany]
-                        .filter(Boolean)
-                        .join(", ")}
+                      {[t.company].filter(Boolean).join(", ")}
                     </p>
                   )}
                 </div>

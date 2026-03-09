@@ -44,9 +44,9 @@ export function EducationSection() {
                         </p>
                       </div>
                       <span className="text-muted-foreground text-xs shrink-0">
-                        {edu.startYear}
-                        {edu.endYear
-                          ? ` – ${edu.endYear}`
+                        {format(new Date(edu.startDate), "MMM yyyy")}
+                        {edu.endDate
+                          ? ` – ${format(new Date(edu.endDate), "MMM yyyy")}`
                           : edu.isCurrent
                             ? " – Present"
                             : ""}
@@ -88,15 +88,15 @@ export function EducationSection() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h3 className="text-foreground font-bold">
-                          {cert.name}
+                          {cert.title}
                         </h3>
                         <p className="text-primary text-sm font-medium">
                           {cert.issuer}
                         </p>
                       </div>
-                      {cert.issueDate && (
+                      {cert.issuedAt && (
                         <span className="text-muted-foreground text-xs shrink-0">
-                          {format(new Date(cert.issueDate), "MMM yyyy")}
+                          {format(new Date(cert.issuedAt), "MMM yyyy")}
                         </span>
                       )}
                     </div>
