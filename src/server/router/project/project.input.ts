@@ -34,7 +34,7 @@ export const createProjectInput = z.object({
   status: projectStatusSchema.default("DRAFT"),
   isFeatured: z.boolean().default(false),
   sortOrder: z.number().int().default(0),
-  metadata: z.record(z.string()).optional().nullable(),
+  metadata: z.record(z.string(), z.unknown()).optional().nullable(),
   startDate: z.string().optional().nullable(),
   endDate: z.string().optional().nullable(),
   categoryId: z.string().optional().nullable(),

@@ -22,6 +22,9 @@ export const user = pgTable("user", {
   headline: text("headline"),
   location: text("location"),
   website: text("website"),
+  banned: boolean("banned").default(false),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
