@@ -118,7 +118,6 @@ export function BlogCommentsSheet({
                     : "border-amber-200 bg-amber-50/50 dark:border-amber-800/50 dark:bg-amber-950/20",
                 )}
               >
-                {/* Header */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <Avatar className="size-7 shrink-0">
@@ -157,12 +156,10 @@ export function BlogCommentsSheet({
                   </Badge>
                 </div>
 
-                {/* Content */}
                 <p className="text-sm text-foreground/90 leading-relaxed">
                   {comment.content}
                 </p>
 
-                {/* Replies indicator */}
                 {comment.replies?.length > 0 && (
                   <p className="text-xs text-muted-foreground">
                     {comment.replies.length} repl
@@ -170,7 +167,6 @@ export function BlogCommentsSheet({
                   </p>
                 )}
 
-                {/* Actions */}
                 <div className="flex items-center gap-2 pt-1">
                   <Button
                     size="sm"

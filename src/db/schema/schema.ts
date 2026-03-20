@@ -17,3 +17,4 @@ export * from "./social-link";
 
 export * from "./newsletter";
 export * from "./analytics";
+export * from "./file";

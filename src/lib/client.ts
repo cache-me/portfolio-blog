@@ -11,6 +11,13 @@ const link = new RPCLink({
     const token = localStorage.getItem("auth_token");
     return token ? { Authorization: `Bearer ${token}` } : {};
   },
+  fetch: (request, init) => {
+    return globalThis.fetch(request, {
+      ...init,
+      credentials: "include",
+    });
+  }, // Include cookies for cross-origin requests
+
   interceptors: [
     onError((error) => {
       console.error(error);

@@ -3,14 +3,31 @@ import {
   boolean,
   index,
   integer,
+  pgEnum,
   pgTable,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { blogStatus } from "./enums";
 import { user } from "./auth";
 import { category } from "./category";
 import { tag } from "./tag";
+import { upload } from "./file";
+
+export const blogStatusEnum = pgEnum("blog_status", [
+  "DRAFT",
+  "PUBLISHED",
+  "ARCHIVED",
+]);
+
+export const blogMediaTypeEnum = pgEnum("blog_media_type", [
+  "UPLOAD",
+  "YOUTUBE",
+  "VIMEO",
+  "TWITTER",
+  "INSTAGRAM",
+  "TIKTOK",
+  "EXTERNAL",
+]);
 
 export const blog = pgTable(
   "blog",
@@ -20,8 +37,11 @@ export const blog = pgTable(
     slug: text("slug").notNull().unique(),
     summary: text("summary").notNull(),
     content: text("content"),
-    coverImage: text("cover_image"),
-    status: blogStatus("status").default("DRAFT").notNull(),
+    coverImageId: text("cover_image_id").references(() => upload.id, {
+      onDelete: "set null",
+    }),
+    coverImageUrl: text("cover_image_url"),
+    status: blogStatusEnum("status").default("DRAFT").notNull(),
     isFeatured: boolean("is_featured").default(false).notNull(),
     readTimeMinutes: integer("read_time_minutes"),
     viewCount: integer("view_count").default(0).notNull(),
@@ -49,6 +69,36 @@ export const blog = pgTable(
     index("blog_slug_idx").on(table.slug),
     index("blog_authorId_idx").on(table.authorId),
     index("blog_categoryId_idx").on(table.categoryId),
+    index("blog_coverImageId_idx").on(table.coverImageId),
+  ],
+);
+
+export const blogMedia = pgTable(
+  "blog_media",
+  {
+    id: text("id").primaryKey(),
+    blogId: text("blog_id")
+      .notNull()
+      .references(() => blog.id, { onDelete: "cascade" }),
+    type: blogMediaTypeEnum("type").notNull(),
+    uploadId: text("upload_id").references(() => upload.id, {
+      onDelete: "set null",
+    }),
+    url: text("url").notNull(),
+    embedId: text("embed_id"),
+    title: text("title"),
+    description: text("description"),
+    position: integer("position").default(0).notNull(),
+    thumbnailUrl: text("thumbnail_url"),
+    durationSeconds: integer("duration_seconds"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("blogMedia_blogId_idx").on(table.blogId),
+    index("blogMedia_uploadId_idx").on(table.uploadId),
+    index("blogMedia_position_idx").on(table.blogId, table.position),
   ],
 );
 
@@ -76,7 +126,7 @@ export const blogComment = pgTable(
     authorId: text("author_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    parentId: text("parent_id"), // self-referential — handled via relation
+    parentId: text("parent_id"),
     isApproved: boolean("is_approved").default(false).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -98,8 +148,21 @@ export const blogRelations = relations(blog, ({ one, many }) => ({
     fields: [blog.categoryId],
     references: [category.id],
   }),
+  coverImage: one(upload, {
+    fields: [blog.coverImageId],
+    references: [upload.id],
+  }),
   tags: many(blogTag),
+  media: many(blogMedia),
   comments: many(blogComment),
+}));
+
+export const blogMediaRelations = relations(blogMedia, ({ one }) => ({
+  blog: one(blog, { fields: [blogMedia.blogId], references: [blog.id] }),
+  upload: one(upload, {
+    fields: [blogMedia.uploadId],
+    references: [upload.id],
+  }),
 }));
 
 export const blogTagRelations = relations(blogTag, ({ one }) => ({
@@ -120,3 +183,9 @@ export const blogCommentRelations = relations(blogComment, ({ one, many }) => ({
   }),
   replies: many(blogComment, { relationName: "comment_replies" }),
 }));
+
+export type Blog = typeof blog.$inferSelect;
+export type NewBlog = typeof blog.$inferInsert;
+export type BlogMedia = typeof blogMedia.$inferSelect;
+export type NewBlogMedia = typeof blogMedia.$inferInsert;
+export type BlogMediaType = (typeof blogMediaTypeEnum.enumValues)[number];

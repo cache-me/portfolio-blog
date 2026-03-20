@@ -7,6 +7,7 @@ import { certificateRouter } from "./router/certificate/certificate.router";
 import { contactRouter } from "./router/contact/contact.router";
 import { educationRouter } from "./router/education/education.router";
 import { experienceRouter } from "./router/experience/experience.router";
+import { uploadRouter } from "./router/file/file.router";
 import { newsletterRouter } from "./router/newsletter/newsletter.router";
 import { profileRouter } from "./router/profile/profile.router";
 import { projectRouter } from "./router/project/project.router";
@@ -31,6 +32,7 @@ export const appRouter = o.router({
   socialLink: socialLinkRouter,
   tag: tagRouter,
   testimonial: testimonialRouter,
+  file: uploadRouter,
 });
 
 export type AppRouter = typeof appRouter;

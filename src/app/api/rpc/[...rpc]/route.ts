@@ -25,11 +25,19 @@ async function createContext(req: NextRequest) {
 }
 
 async function handleRequest(req: NextRequest) {
-  const { response } = await handler.handle(req, {
-    prefix: "/api/rpc",
-    context: await createContext(req),
-  });
-  return response ?? new Response("Not found", { status: 404 });
+  try {
+    const { response } = await handler.handle(req, {
+      prefix: "/api/rpc",
+      context: await createContext(req),
+    });
+    return response ?? new Response("Not found", { status: 404 });
+  } catch (error) {
+    console.error("[oRPC] Unhandled error:", error);
+    return new Response(JSON.stringify({ error: String(error) }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 }
 
 export const GET = handleRequest;
